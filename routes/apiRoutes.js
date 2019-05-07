@@ -26,6 +26,11 @@ module.exports = function(app) {
   //       "This is a great group with great people, playing a great game of magic",
   //     location: "41^24'12.2N2^10'26.5E"
   //   };
+
+  app.get("/", function(req, res) {
+      res.json("welcome")
+  })
+  
   app.get("/chats", (req, res) => {
     db.Chatroom.find()
       .then(function(response) {
