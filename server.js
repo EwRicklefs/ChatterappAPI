@@ -36,7 +36,7 @@ io.on("connection", client => {
 
   client.on("message", (msg, room) => onMessageReceived(msg, room, client));
 
-  client.on("disconnect", UserId => onDisconnect(userId));
+  client.on("disconnect", userId => onDisconnect(userId));
 
   client.on("error", function(err) {
     console.log("received error from client:", client.id);
@@ -85,9 +85,9 @@ function _sendExistingMessages(room, client) {
 function _sendAndSaveMessage(msg, room, client, fromServer) {
   let messageData = {
     text: msg.text,
-    uesr: msg.user,
+    user: msg.user,
     createdAt: new Date(message.createdAt),
-    chatId: chatId
+    chatName: room
   };
 
   // Will need to modify database path to math our structure
