@@ -11,7 +11,7 @@ const MessageSchema = new Schema({
     // Time is was created
     time: { type : Date, default: Date.now },
     // Message owner
-    name: String,
+    name: {type: Schema.Types.userName, ref: 'User'},
 
     chatName: String
 

@@ -28,9 +28,9 @@ module.exports = function(app) {
   //   };
 
   app.get("/", function(req, res) {
-      res.json("welcome")
-  })
-  
+    res.json("welcome");
+  });
+
   app.get("/chats", (req, res) => {
     db.Chatroom.find()
       .then(function(response) {
@@ -52,12 +52,8 @@ module.exports = function(app) {
   });
 
   app.post("/chat", (req, res) => {
-    db.Chatroom.create({
-      title: "Ballard",
-      description: "This is Ballard",
-      location: "41^24'12.2N2^10'26.5E"
-    })
-      .then(dbChatroom => console.log(dbChatroom))
+    db.Chatroom.create(req.body)
+      .then(dbChatroom => res.json(dbChatroom))
       .catch(err => {
         if (err) throw err;
       });
@@ -66,32 +62,40 @@ module.exports = function(app) {
   app.post("/message/:room", (req, res) => {
     let newMsg = {
       message: req.body.message,
-      name: req.body.user,
+      name: req.body.name,
       chatName: req.params.room
     };
     db.Message.create(newMsg)
       .then(function(dbMessage) {
-        res.json(dbMessage)
+        // res.json(dbMessage)
         // We will parse in the chatroom id, when making the post request
-        console.log(dbMessage._id)
+        console.log(dbMessage._id);
         db.Chatroom.findOneAndUpdate(
           { title: req.params.room },
           { $push: { messages: dbMessage._id } }
-        );
+        ).then(chatroom => {
+          console.log("chatroom updated");
+          res.json(chatroom);
+        });
       })
-      .then(function(test) {
-        console.log("message inserted")
-      })
+      .then(function(test) {})
       .catch(err => {
         if (err) console.log(err);
       });
   });
 
   app.get("/message/:room", (req, res) => {
-    db.Message.find().sort;
+    db.Chatroom.findOne({ title: req.params.room }).then(room => {
+      let idArr = room.messages;
+      db.Message.find({ _id: { $in: idArr } }).then(messages => {
+        let getMessages = messages;
+        res.json(getMessages)
+      });
+    });
   });
 
   // Route for grabing room and populating it with the messages
+
   db.Chatroom.findOne({ _id: "5ccc8061e8d46d44908c7001" })
     .populate("messages")
     .then(function(data) {
