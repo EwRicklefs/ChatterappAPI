@@ -14,7 +14,7 @@ app.use(express.json());
 var db = require("./models");
 
 // Connect to the mongoDb
-mongoose.connect("mongodb://localhost/chatterappdb", { useNewUrlParser: true });
+mongoose.connect("mongodb://heroku_gcgtf14g:qmsa1ecmde76ciish9m4osh24s@ds161295.mlab.com:61295/heroku_gcgtf14g", { useNewUrlParser: true });
 
 const members = new Map();
 let chatHistory = [];
