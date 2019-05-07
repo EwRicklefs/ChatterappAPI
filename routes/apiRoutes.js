@@ -51,6 +51,24 @@ module.exports = function(app) {
       });
   });
 
+  app.get("/users", (req, res) => {
+    db.User.find()
+      .then(function(response) {
+        res.json(response);
+      })
+      .catch(err => {
+        if (err) console.log(err);
+      });
+  });  
+
+  app.post("/user", (req, res) => {
+    db.User.create(req.body)
+      .then(dbUser => res.json(dbUser))
+      .catch(err => {
+        if (err) throw err;
+      });
+  });
+
   app.post("/chat", (req, res) => {
     db.Chatroom.create(req.body)
       .then(dbChatroom => res.json(dbChatroom))
@@ -87,9 +105,10 @@ module.exports = function(app) {
   app.get("/message/:room", (req, res) => {
     db.Chatroom.findOne({ title: req.params.room }).then(room => {
       let idArr = room.messages;
-      db.Message.find({ _id: { $in: idArr } }).then(messages => {
-        let getMessages = messages;
-        res.json(getMessages)
+      db.Message.find({ _id: { $in: idArr } }).populate('name')
+      .then(messages => {
+        console.log(messages)
+        res.json(messsages)
       });
     });
   });

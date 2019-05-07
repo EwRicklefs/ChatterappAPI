@@ -11,10 +11,17 @@ const MessageSchema = new Schema({
     // Time is was created
     time: { type : Date, default: Date.now },
     // Message owner
-    name: {type: Schema.Types.userName, ref: 'User'},
+    name: {type: Schema.Types.ObjectId, ref: 'User'},
 
     chatName: String
 
+}, { toJSON: { virtuals: true } })
+
+MessageSchema.virtual('user', {
+    ref: 'User',
+    localField: 'name',
+    foreignField: 'userName',
+    justOne: true
 })
 
 // Create model with the Schema above
