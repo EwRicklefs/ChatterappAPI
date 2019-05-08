@@ -62,7 +62,8 @@ function onJoin(userId, room, client) {
 }
 
 function onMessageReceived(msg, room, senderClient) {
-  let userId = users[senderClient];
+  // let userId = users[senderClient];
+  let userId = "Sammy"
   console.log(msg, room, senderClient)
 
   if (!userId) {
