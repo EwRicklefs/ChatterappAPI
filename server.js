@@ -64,7 +64,7 @@ function onJoin(userId, room, client) {
 function onMessageReceived(msg, room, senderClient) {
   // let userId = users[senderClient];
   let userId = "Sammy"
-  console.log(msg, room, senderClient)
+  console.log(msg, room)
 
   if (!userId) {
     console.log("Listening without user ID");
