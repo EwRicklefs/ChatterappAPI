@@ -6,6 +6,7 @@ const app = express();
 var http = require("http").Server(app);
 const io = require("socket.io")(http);
 const PORT = process.env.PORT || 5000;
+import axios from "axios";
 
 //Parse request body as a JSON
 app.use(express.urlencoded({ extended: true }));
