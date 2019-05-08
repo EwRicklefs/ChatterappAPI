@@ -104,14 +104,16 @@ function _sendAndSaveMessage(msg, room, client, fromServer) {
   let connString = "https://murmuring-sea-22252.herokuapp.com/message/" + room;
   axios.post(connString, messageData).then(res => {
     console.log(res);
-  });
-
-  // Will need to modify database path to math our structure
-  db.collection("message").insert(messageData, (err, msg, room) => {
-    // If the message is from the server, then send to everyone.
     let emitter = fromServer ? io : socket.to(room);
     emitter.emit("message", [msg]);
   });
+
+  // Will need to modify database path to math our structure
+  // db.collection("message").insert(messageData, (err, msg, room) => {
+  //   // If the message is from the server, then send to everyone.
+  //   let emitter = fromServer ? io : socket.to(room);
+  //   emitter.emit("message", [msg]);
+  // });
 }
 
 // Allow the server to participate in the chatroom through stdin.
