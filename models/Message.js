@@ -11,21 +11,32 @@ const MessageSchema = new Schema({
     // Time is was created
     time: { type : Date, default: Date.now },
     // Message owner
-    name: {type: Schema.Types.ObjectId, ref: 'User'},
-
+    user: {
+        name: {type: String},
+        _id: {type: String},
+        url: {type: String, default: "https://via.placeholder.com/150"}
+    },
     chatName: String
 
-}, { toJSON: { virtuals: true } })
+}
+// , { toJSON: { virtuals: true } }
+)
 
-MessageSchema.virtual('user', {
-    ref: 'User',
-    localField: 'name',
-    foreignField: 'userName',
-    justOne: true
-})
+// MessageSchema.virtual('user', {
+//     ref: 'User',
+//     localField: 'name',
+//     foreignField: 'userName',
+//     justOne: true
+// })
 
 // Create model with the Schema above
 const Message = mongoose.model("Message", MessageSchema);
 
 //Export Chatroom model
 module.exports = Message;
+
+
+// .populate('name').exec((err, user)=> {
+//     if (err) return err;
+//     res.json
+// })

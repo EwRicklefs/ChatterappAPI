@@ -78,9 +78,16 @@ module.exports = function(app) {
   });
 
   app.post("/message/:room", (req, res) => {
+    let idVal = 0
+    db.User.findOne({userName:req.body.userName}).then(user=> {
+        idVal = user._id
+    }).catch(err => {
+        if(err) console.log(err);
+    })
     let newMsg = {
       message: req.body.message,
-      name: req.body.name,
+      //TODO: Fix this to get the ID from the user table
+      user: {name:req.body.userName, _id: idVal},
       chatName: req.params.room
     };
     db.Message.create(newMsg)
@@ -105,10 +112,9 @@ module.exports = function(app) {
   app.get("/message/:room", (req, res) => {
     db.Chatroom.findOne({ title: req.params.room }).then(room => {
       let idArr = room.messages;
-      db.Message.find({ _id: { $in: idArr } }).populate('name')
-      .then(messages => {
-        console.log(messages)
-        res.json(messsages)
+    
+      db.Message.find({ _id: { $in: idArr } }).then(messages => {
+        res.json(messages)
       });
     });
   });
