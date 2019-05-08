@@ -71,12 +71,12 @@ module.exports = function(app) {
 
     //creating a chat should create one dummy message
   app.post("/createChat", (req, res) => {
-    db.Message.create({
-        messsage: "welcome to your chat!",
-        chatName: req.body.chatName,
-        user: {name: "adminUser",
-            _id: 12345}
-    })
+    // db.Message.create({
+    //     messsage: "welcome to your chat!",
+    //     chatName: req.body.chatName,
+    //     user: {name: "adminUser",
+    //         _id: 12345}
+    // })
     db.Chatroom.create(req.body)
       .then(dbChatroom => res.json(dbChatroom))
       .catch(err => {
