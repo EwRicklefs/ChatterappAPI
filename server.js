@@ -93,7 +93,7 @@ function _sendAndSaveMessage(msg, room, client, fromServer) {
   };
   console.log(messageData);
   let connString = "https://murmuring-sea-22252.herokuapp.com/message/" + room;
-  axios.put(connString, messageData).then(res => {
+  axios.post(connString, messageData).then(res => {
     console.log(res);
   });
 
