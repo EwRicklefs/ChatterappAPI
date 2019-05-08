@@ -38,7 +38,7 @@ io.on("connection", client => {
 
   client.on("message", (msg, room) => onMessageReceived(msg, room, client));
 
-  client.on("disconnect", userId => onDisconnect(userId));
+  // client.on("disconnect", userId => onDisconnect(userId));
 
   client.on("error", function(err) {
     console.log("received error from client:", client.id);
