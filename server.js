@@ -14,13 +14,15 @@ app.use(express.json());
 var db = require("./models");
 
 // Connect to the mongoDb
-mongoose.connect("mongodb://heroku_gcgtf14g:qmsa1ecmde76ciish9m4osh24s@ds161295.mlab.com:61295/heroku_gcgtf14g", { useNewUrlParser: true });
+mongoose.connect(
+  "mongodb://heroku_gcgtf14g:qmsa1ecmde76ciish9m4osh24s@ds161295.mlab.com:61295/heroku_gcgtf14g",
+  { useNewUrlParser: true }
+);
 
 const members = new Map();
 let chatHistory = [];
 
 require("./routes/apiRoutes")(app);
-
 
 //sockets logic - TODO: make sure Matts latest code ends up here
 let clients = {};
@@ -52,7 +54,7 @@ function onJoin(userId, room, client) {
     } else {
       client.join(room);
       users[client.id] = userId;
-      _sendExistingMessages(client, room);
+      // _sendExistingMessages(client, room);
     }
   } catch (err) {
     console.err(err);
@@ -86,12 +88,17 @@ function _sendAndSaveMessage(msg, room, client, fromServer) {
   let messageData = {
     text: msg.text,
     user: msg.user,
-    createdAt: new Date(message.createdAt),
+    // createdAt: new Date(message.createdAt),
     chatName: room
   };
+  console.log(messageData);
+  let connString = "https://murmuring-sea-22252.herokuapp.com/message/" + room;
+  axios.put(connString, messageData).then(res => {
+    console.log(res);
+  });
 
   // Will need to modify database path to math our structure
-  db.collection("messages").insert(messageData, (err, msg, room) => {
+  db.collection("message").insert(messageData, (err, msg, room) => {
     // If the message is from the server, then send to everyone.
     let emitter = fromServer ? io : socket.to(room);
     emitter.emit("message", [msg]);
@@ -100,12 +107,16 @@ function _sendAndSaveMessage(msg, room, client, fromServer) {
 
 // Allow the server to participate in the chatroom through stdin.
 var stdin = process.openStdin();
-stdin.addListener('data', function(d) {
-  _sendAndSaveMessage({
-    text: d.toString().trim(),
-    createdAt: new Date(),
-    user: { _id: 'robot' }
-  }, null /* no socket */, true /* send from server */);
+stdin.addListener("data", function(d) {
+  _sendAndSaveMessage(
+    {
+      text: d.toString().trim(),
+      createdAt: new Date(),
+      user: { _id: "robot" }
+    },
+    null /* no socket */,
+    true /* send from server */
+  );
 });
 
 //Start the server
