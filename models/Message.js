@@ -7,16 +7,15 @@ const Schema = mongoose.Schema;
 //Create a new Schema obj
 const MessageSchema = new Schema({
     // Message
-    message: String,
+    text: String,
     // Time is was created
-    time: { type : Date, default: Date.now },
+    createdAt: { type : Date, default: Date.now },
     // Message owner
     user: {
         name: {type: String},
         _id: {type: String},
         url: {type: String, default: "https://via.placeholder.com/150"}
     },
-    chatName: String
 
 }
 // , { toJSON: { virtuals: true } }

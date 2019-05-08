@@ -87,10 +87,10 @@ module.exports = function(app) {
   app.post("/message/:room", (req, res) => {
     let idVal = 0
     db.User.findOne({userName:req.body.userName}).then(user=> {
+        console.log(user._id)
         idVal = user._id
-    }).catch(err => {
-        if(err) console.log(err);
-    })
+    }).then(()=> {
+    console.log(idVal)
     let newMsg = {
       message: req.body.message,
       user: {name:req.body.userName, _id: idVal},
@@ -113,6 +113,7 @@ module.exports = function(app) {
       .catch(err => {
         if (err) console.log(err);
       });
+    })
   });
 
   app.get("/message/:room", (req, res) => {
@@ -127,12 +128,12 @@ module.exports = function(app) {
 
   // Route for grabing room and populating it with the messages
 
-  db.Chatroom.findOne({ _id: "5ccc8061e8d46d44908c7001" })
-    .populate("messages")
-    .then(function(data) {
-      console.log(data);
-    })
-    .catch(function(err) {
-      console.log(err);
-    });
+//   db.Chatroom.findOne({ _id: "5ccc8061e8d46d44908c7001" })
+//     .populate("messages")
+//     .then(function(data) {
+//       console.log(data);
+//     })
+//     .catch(function(err) {
+//       console.log(err);
+//     });
 };
