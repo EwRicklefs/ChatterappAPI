@@ -63,6 +63,8 @@ module.exports = function(app) {
 
   app.post("/message/:room", (req, res) => {
     let idVal = 0
+    console.log(req.body.message)
+    console.log(req.body.userName)
     db.User.findOne({userName:req.body.userName}).then(user=> {
         console.log(user._id)
         idVal = user._id
