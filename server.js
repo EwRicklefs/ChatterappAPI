@@ -65,7 +65,6 @@ function onJoin(userId, room, client) {
 function onMessageReceived(msg, room, senderClient) {
   // let userId = users[senderClient];
   let userId = "Sammy"
-  console.log(msg)
 
   if (!userId) {
     console.log("Listening without user ID");
@@ -100,7 +99,6 @@ function _sendAndSaveMessage(msg, room, client, fromServer) {
     // createdAt: new Date(message.createdAt),
     chatName: room
   };
-  console.log(msg);
   let connString = "https://murmuring-sea-22252.herokuapp.com/message/" + room;
   axios.post(connString, messageData).then(res => {
     console.log(res);

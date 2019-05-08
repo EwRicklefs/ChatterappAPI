@@ -62,35 +62,37 @@ module.exports = function(app) {
   });
 
   app.post("/message/:room", (req, res) => {
-    let idVal = 0
-    console.log(req.body.message)
-    db.User.findOne({userName:req.body.userName}).then(user=> {
-        console.log(user._id)
-        idVal = user._id
-    }).then(()=> {
-    console.log(idVal)
-    let newMsg = {
-      text: req.body.message,
-      user: {name:req.body.userName, _id: idVal},
-    };
-    db.Message.create(newMsg)
-      .then(function(dbMessage) {
-        // res.json(dbMessage)
-        // We will parse in the chatroom id, when making the post request
-        // console.log(dbMessage._id);
-        db.Chatroom.findOneAndUpdate(
-          { title: req.params.room },
-          { $push: { messages: dbMessage._id } }
-        ).then(chatroom => {
-          console.log("chatroom updated");
-          res.json(newMsg)
-        });
+    let idVal = 0;
+    console.log(req.body.message);
+    db.User.findOne({ userName: req.body.user.userName })
+      .then(user => {
+        console.log("user id is " + user._id);
+        idVal = user._id;
       })
-      .then(function(test) {})
-      .catch(err => {
-        if (err) console.log(err);
+      .then(() => {
+        console.log("id val is " + idVal);
+        let newMsg = {
+          text: req.body.message,
+          user: { name: req.body.userName, _id: idVal }
+        };
+        db.Message.create(newMsg)
+          .then(function(dbMessage) {
+            // res.json(dbMessage)
+            // We will parse in the chatroom id, when making the post request
+            // console.log(dbMessage._id);
+            db.Chatroom.findOneAndUpdate(
+              { title: req.params.room },
+              { $push: { messages: dbMessage._id } }
+            ).then(chatroom => {
+              console.log("chatroom updated");
+              res.json(newMsg);
+            });
+          })
+          .then(function(test) {})
+          .catch(err => {
+            if (err) console.log(err);
+          });
       });
-    })
   });
 
   app.get("/message/:room", (req, res) => {
