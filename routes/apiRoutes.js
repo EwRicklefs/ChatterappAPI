@@ -69,7 +69,14 @@ module.exports = function(app) {
       });
   });
 
-  app.post("/chat", (req, res) => {
+    //creating a chat should create one dummy message
+  app.post("/createChat", (req, res) => {
+    db.Message.create({
+        messsage: "welcome to your chat!",
+        chatName: req.body.chatName,
+        user: {name: "adminUser",
+            _id: 12345}
+    })
     db.Chatroom.create(req.body)
       .then(dbChatroom => res.json(dbChatroom))
       .catch(err => {
@@ -86,7 +93,6 @@ module.exports = function(app) {
     })
     let newMsg = {
       message: req.body.message,
-      //TODO: Fix this to get the ID from the user table
       user: {name:req.body.userName, _id: idVal},
       chatName: req.params.room
     };
@@ -94,13 +100,13 @@ module.exports = function(app) {
       .then(function(dbMessage) {
         // res.json(dbMessage)
         // We will parse in the chatroom id, when making the post request
-        console.log(dbMessage._id);
+        // console.log(dbMessage._id);
         db.Chatroom.findOneAndUpdate(
           { title: req.params.room },
           { $push: { messages: dbMessage._id } }
         ).then(chatroom => {
           console.log("chatroom updated");
-          res.json(chatroom);
+          res.json(newMsg)
         });
       })
       .then(function(test) {})
