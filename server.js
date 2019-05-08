@@ -77,14 +77,20 @@ function onMessageReceived(msg, room, senderClient) {
 
 function _sendExistingMessages(room, client) {
   // Will need to modify database path to math our structure
-  let messages = db
-    .collection("messages")
-    .find(room)
-    .sort({ createdAt: 1 })
-    .toArray((err, messages) => {
-      if (!messages.length) return;
-      client.to(room).emit("message", messages.reverse);
-    });
+  let connString = "https://murmuring-sea-22252.herokuapp.com/message/" + room;
+  axios.get(connString).then( res=> {
+    console.log(res)
+    client.to(room).emit("message", res.reverse);
+  })
+
+  // let messages = db
+  //   .collection("Message")
+  //   .find(room)
+  //   .sort({ createdAt: 1 })
+  //   .toArray((err, messages) => {
+  //     if (!messages.length) return;
+  //     client.to(room).emit("message", messages.reverse);
+  //   });
 }
 
 function _sendAndSaveMessage(msg, room, client, fromServer) {
