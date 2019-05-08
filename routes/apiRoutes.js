@@ -2,30 +2,7 @@
 const db = require("../models");
 
 module.exports = function(app) {
-  //Dummy data
-  //   const tempData = {
-  //     userName: "TomJ",
-  //     firstName: "Tom",
-  //     lastName: "Jones",
-  //     password: "passTom",
-  //     homeLocation: "41^24'12.2N2^10'26.5E",
-  //     currentLocation: "41^24'32.6N2^15'12.3E"
-  //   };
 
-  // //Dummy Note
-  //   const tempMessage = {
-  //     message: "Pokemons",
-  //     data: "101023041005",
-  //     name: "Tom"
-  //   };
-
-  //Dummy Chatroom
-  //   const tempRoom = {
-  //     title: "MTG RULES",
-  //     description:
-  //       "This is a great group with great people, playing a great game of magic",
-  //     location: "41^24'12.2N2^10'26.5E"
-  //   };
 
   app.get("/", function(req, res) {
     res.json("welcome");
@@ -92,9 +69,8 @@ module.exports = function(app) {
     }).then(()=> {
     console.log(idVal)
     let newMsg = {
-      message: req.body.message,
+      text: req.body.message,
       user: {name:req.body.userName, _id: idVal},
-      chatName: req.params.room
     };
     db.Message.create(newMsg)
       .then(function(dbMessage) {
