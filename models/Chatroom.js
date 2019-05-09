@@ -14,7 +14,7 @@ const ChatroomSchema = new Schema({
     // Description of the Chatroom
     description: String,
     // Location of the Chatroom
-    location: String,
+    location :Schema.Types.Mixed,
     // Messages in the Chatroom
     messages: [
         {
