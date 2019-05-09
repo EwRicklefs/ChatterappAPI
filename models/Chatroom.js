@@ -18,7 +18,7 @@ const ChatroomSchema = new Schema({
     //default room
     defaultRoom: {
         type: Boolean,
-        default: True
+        default: true
     },
     // Messages in the Chatroom
     messages: [
