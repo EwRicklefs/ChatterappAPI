@@ -14,13 +14,11 @@ app.use(express.json());
 var db = require("./models");
 
 // Connect to the mongoDb
-mongoose.connect("mongodb://heroku_gcgtf14g:qmsa1ecmde76ciish9m4osh24s@ds161295.mlab.com:61295/heroku_gcgtf14g", { useNewUrlParser: true });
+// mongoose.connect("mongodb://heroku_gcgtf14g:qmsa1ecmde76ciish9m4osh24s@ds161295.mlab.com:61295/heroku_gcgtf14g", { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/chatterlocaldb");
 
-const members = new Map();
-let chatHistory = [];
 
 require("./routes/apiRoutes")(app);
-
 
 //sockets logic - TODO: make sure Matts latest code ends up here
 let clients = {};
