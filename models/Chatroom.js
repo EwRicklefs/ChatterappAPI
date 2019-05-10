@@ -14,7 +14,12 @@ const ChatroomSchema = new Schema({
     // Description of the Chatroom
     description: String,
     // Location of the Chatroom
-    location: String,
+    location :Schema.Types.Mixed,
+    //default room
+    defaultRoom: {
+        type: Boolean,
+        default: true
+    },
     // Messages in the Chatroom
     messages: [
         {
