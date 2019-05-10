@@ -8,8 +8,7 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   // Store the user's username, it must be a unique String
   name: {
-    type: String,
-    unique: true
+    type: String
   },
   // Stores avatar url
   url: {
