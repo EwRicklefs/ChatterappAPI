@@ -5,8 +5,8 @@ const mongoose = require("mongoose");
 const app = express();
 var http = require("http").Server(app);
 const io = require("socket.io")(http);
-const PORT = process.env.PORT || 5000;
-const axios =require("axios");
+const PORT = process.env.PORT || 3001;
+const axios = require("axios");
 
 //Parse request body as a JSON
 app.use(express.urlencoded({ extended: true }));
@@ -15,13 +15,11 @@ app.use(express.json());
 var db = require("./models");
 
 // Connect to the mongoDb
-mongoose.connect(
-  "mongodb://heroku_gcgtf14g:qmsa1ecmde76ciish9m4osh24s@ds161295.mlab.com:61295/heroku_gcgtf14g",
-  { useNewUrlParser: true }
-);
-
-const members = new Map();
-let chatHistory = [];
+mongoose.connect("mongodb://heroku_gcgtf14g:qmsa1ecmde76ciish9m4osh24s@ds161295.mlab.com:61295/heroku_gcgtf14g", { useNewUrlParser: true });
+// mongoose.connect(
+//   process.env.MONGODB_URI || "mongodb://localhost/chatterlocaldb",
+//   { useNewUrlParser: true }
+// );
 
 require("./routes/apiRoutes")(app);
 
@@ -48,6 +46,9 @@ io.on("connection", client => {
 });
 
 function onJoin(userId, room, client) {
+  console.log("Join hit");
+  console.log("userId" + userId);
+  console.log("room" + room);
   try {
     if (!userId) {
       // Todo: Code for unlogged user viewing local chat
@@ -55,7 +56,7 @@ function onJoin(userId, room, client) {
     } else {
       client.join(room);
       users[client.id] = userId;
-      // _sendExistingMessages(client, room);
+      _sendExistingMessages(room, client);
     }
   } catch (err) {
     console.err(err);
@@ -64,7 +65,7 @@ function onJoin(userId, room, client) {
 
 function onMessageReceived(msg, room, senderClient) {
   // let userId = users[senderClient];
-  let userId = "Sammy"
+  let userId = "Sammy";
 
   if (!userId) {
     console.log("Listening without user ID");
@@ -76,11 +77,13 @@ function onMessageReceived(msg, room, senderClient) {
 
 function _sendExistingMessages(room, client) {
   // Will need to modify database path to math our structure
-  let connString = "https://murmuring-sea-22252.herokuapp.com/message/" + room;
-  axios.get(connString).then( res=> {
-    console.log(res)
-    client.to(room).emit("message", res.reverse);
-  })
+  // let connString = "https://murmuring-sea-22252.herokuapp.com/message/" + room;
+  // let connString = "localhost:3001/message/" + room;
+
+  // axios.get(connString).then(res => {
+  //   console.log(res);
+  //   client.to(room).emit("message", res.reverse);
+  // });
 
   // let messages = db
   //   .collection("Message")
@@ -90,6 +93,20 @@ function _sendExistingMessages(room, client) {
   //     if (!messages.length) return;
   //     client.to(room).emit("message", messages.reverse);
   //   });
+  console.log("room");
+  console.log(room);
+  db.Chatroom.findOne({ title: room })
+    .then(room => {
+      let idArr = room.messages;
+      db.Message.find({ _id: { $in: idArr } }).then(messages => {
+        console.log(messages);
+        if (!messages.length) return;
+        client.emit("message", messages);
+      });
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }
 
 function _sendAndSaveMessage(msg, room, client, fromServer) {
@@ -100,18 +117,40 @@ function _sendAndSaveMessage(msg, room, client, fromServer) {
     chatName: room
   };
   let connString = "https://murmuring-sea-22252.herokuapp.com/message/" + room;
-  axios.post(connString, messageData).then(res => {
-    console.log(res);
-    let emitter = fromServer ? io : socket.to(room);
-    emitter.emit("message", [msg]);
-  });
+  // let connString = "localhost:3001/message/" + room;
 
-  // Will need to modify database path to math our structure
-  // db.collection("message").insert(messageData, (err, msg, room) => {
-  //   // If the message is from the server, then send to everyone.
-  //   let emitter = fromServer ? io : socket.to(room);
-  //   emitter.emit("message", [msg]);
+  // axios.post(connString, messageData).then(res => {
+  //   console.log("axios post request made toward route");
+  //   let emitter = fromServer ? io : client.to(room);
+  //   emitter.emit("message", [msg], () => {
+  //     console.log("post message emit");
+  //   });
+  // }).catch(error => {
+  //   console.log(error);
   // });
+  db.User.findOne({ userName: messageData.user.userName }).then(user => {
+    let newMsg = {
+      // Message
+      text: messageData.text,
+      user: user.name
+    };
+
+    db.Message.create(newMsg)
+      .then(function(dbMessage) {
+        // We will parse in the chatroom id, when making the post request
+        db.Chatroom.findOneAndUpdate(
+          { title: room },
+          { $push: { messages: dbMessage._id } }
+        ).then(() => {
+          let emitter = fromServer ? io : client.to(room);
+          emitter.emit("message", [msg]);
+          console.log("chatroom updated");
+        });
+      })
+      .catch(err => {
+        if (err) console.log(err);
+      });
+  });
 }
 
 // Allow the server to participate in the chatroom through stdin.
