@@ -5,22 +5,17 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 //Create a new Schema obj
-const MessageSchema = new Schema({
+const MessageSchema = new Schema(
+  {
     // Message
-    message: String,
+    text: String,
     // Time is was created
-    time: { type : Date, default: Date.now },
+    createdAt: { type: Date, default: Date.now },
     // Message owner
-    user: {
-        name: {type: String},
-        _id: {type: String},
-        url: {type: String, default: "https://via.placeholder.com/150"}
-    },
-    chatName: String
-
-}
-// , { toJSON: { virtuals: true } }
-)
+    user: String
+  }
+  // , { toJSON: { virtuals: true } }
+);
 
 // MessageSchema.virtual('user', {
 //     ref: 'User',
@@ -34,7 +29,6 @@ const Message = mongoose.model("Message", MessageSchema);
 
 //Export Chatroom model
 module.exports = Message;
-
 
 // .populate('name').exec((err, user)=> {
 //     if (err) return err;
